@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for, jsonify
+from flask import Flask, render_template # request, redirect, session, url_for, jsonify
 import os
 import qrcode
 from datetime import datetime
@@ -6,6 +6,11 @@ from db_config import get_db_connection
 
 app = Flask(__name__)
 app.secret_key = 'clave_super_secreta'
+
+
+@app.route('/login')
+def login():
+    return render_template('login.html')
 
 # Crear carpetas si no existen
 os.makedirs('static/qr', exist_ok=True)
@@ -223,4 +228,4 @@ def escanear():
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+    app.run()
