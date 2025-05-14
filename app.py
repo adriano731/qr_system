@@ -26,7 +26,7 @@ def login():
         contrasena = request.form['contraseña']
 
         conn = get_db_connection()
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         cursor.execute("SELECT * FROM usuarios WHERE usuario = %s AND contraseña = %s", (usuario, contrasena))
         user = cursor.fetchone()
         cursor.close()
