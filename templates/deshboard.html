@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Panel Principal</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <style>
+        .boton {
+            background-color: #007bff;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 16px;
+            margin: 10px 5px;
+            display: inline-block;
+        }
+
+        .boton:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+
+<body>
+    <h2>Bienvenido {{ usuario }} (Rol: {{ rol }})</h2>
+
+    <div>
+        <a href="/registro" class="boton">Registrar Estudiante</a>
+        <a href="/logout" class="boton">Cerrar Sesión</a>
+        <a href="/escanear" class="boton">Escanear QR</a>
+    </div>
+</body>
+</html>

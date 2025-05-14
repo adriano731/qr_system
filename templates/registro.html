@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Estudiante</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+            margin: 0;
+            padding: 20px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .contenedor {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+            justify-content: center;
+        }
+        .formulario, .tabla {
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 8px rgba(0, 0, 0, 0.1);
+            width: 45%;
+        }
+        .formulario input, .formulario select {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            margin-right: 10px;
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th, td {
+            padding: 8px;
+            border: 1px solid #ccc;
+            text-align: center;
+        }
+        th {
+            background-color: #007BFF;
+            color: white;
+        }
+        a {
+            margin-left: 10px;
+            color: #007BFF;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+    <script>
+        function mostrarCamposVehiculo() {
+            let tieneVehiculo = document.getElementById('tiene_vehiculo').checked;
+            document.getElementById('datos_vehiculo').style.display = tieneVehiculo ? 'block' : 'none';
+        }
+
+        function cargarEstudiante() {
+            const id = document.getElementById("id").value;
+            if (id) {
+                fetch(`/buscar_estudiante/${id}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.existe) {
+                            document.getElementById("nombre").value = data.nombre;
+                            document.getElementById("apellidos").value = data.apellidos;
+                            document.getElementById("curso").value = data.curso;
+                            document.getElementById("tiene_vehiculo").checked = data.tiene_vehiculo == 1;
+                            mostrarCamposVehiculo();
+                        } else {
+                            document.getElementById("nombre").value = "";
+                            document.getElementById("apellidos").value = "";
+                            document.getElementById("curso").value = "";
+                            document.getElementById("tiene_vehiculo").checked = false;
+                            mostrarCamposVehiculo();
+                        }
+                    })
+                    .catch(error => console.error("Error al cargar estudiante:", error));
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function () {
+            document.getElementById("id").addEventListener("input", cargarEstudiante);
+        });
+    </script>
+</head>
+<body>
+
+    <h2>Registrar / Actualizar Estudiante</h2>
+    <div class="contenedor">
+
+        <!-- FORMULARIO -->
+        <div class="formulario">
+            <form method="POST" enctype="multipart/form-data">
+                <label>ID del Estudiante:</label>
+                <input type="number" id="id" name="id" required>
+
+                <label>Nombre:</label>
+                <input type="text" id="nombre" name="nombre" required>
+
+                <label>Apellidos:</label>
+                <input type="text" id="apellidos" name="apellidos">
+
+                <label>Curso:</label>
+                <input type="text" id="curso" name="curso">
+
+                <label>Foto del Estudiante:</label><br>
+                <input type="file" name="foto_estudiante" accept="image/*"><br><br>
+
+
+                <label>Tiene Vehículo:</label>
+                <input type="checkbox" id="tiene_vehiculo" name="tiene_vehiculo" value="1" onchange="mostrarCamposVehiculo()">
+
+                <div id="datos_vehiculo" style="display:none;">
+                    <h4>Datos del Vehículo</h4>
+
+                    <label>Modelo:</label>
+                    <input type="text" name="modelo">
+
+                    <label>Placa:</label>
+                    <input type="text" name="placa">
+
+                    <label>Tipo:</label>
+                    <select name="tipo">
+                        <option value="auto">Auto</option>
+                        <option value="moto">Moto</option>
+                        <option value="bicicleta">Bicicleta</option>
+                    </select>
+
+                    <label>Foto del Vehículo:</label>
+                    <input type="file" name="foto" accept="image/*">
+                </div>
+
+                <button type="submit" name="accion" value="registrar">Registrar</button>
+                <button type="submit" name="accion" value="actualizar">Actualizar</button>
+            </form>
+        </div>
+
+        <!-- TABLA -->
+        <div class="tabla">
+            <h3>Lista de Estudiantes Registrados</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>Apellidos</th>
+                        <th>Curso</th>
+                        <th>Vehículo</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for est in estudiantes %}
+                    <tr>
+                        <td>{{ est.id }}</td>
+                        <td>{{ est.nombre }}</td>
+                        <td>{{ est.apellidos }}</td>
+                        <td>{{ est.curso }}</td>
+                        <td>{{ "Sí" if est.tiene_vehiculo == 1 else "No" }}</td>
+                        <td>
+                            <form method="POST" action="/eliminar_estudiante" style="display:inline;">
+                                <input type="hidden" name="id" value="{{ est.id }}">
+                                <button type="submit" onclick="return confirm('¿Estás seguro de eliminar este estudiante?')">Eliminar</button>
+                            </form>
+                            <a href="/ver_qr/{{ est.id }}" >Ver QR</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>QR Generado</title>
+</head>
+<body style="text-align: center; font-family: Arial;">
+    <h2>Registro exitoso</h2>
+    <p>Escanea este código QR:</p>
+    <img src="{{ url_for('static', filename=qr_path) }}" width="250">
+    <br><br>
+    <button onclick="window.print()">Imprimir QR</button>
+    <br><br>
+    <a href="/dashboard"><button>Volver al Dashboard</button></a>
+</body>
+</html>

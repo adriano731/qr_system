@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Perfil del Estudiante</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <style>
+        .boton {
+            display: inline-block;
+            margin: 10px 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+        .boton:hover {
+            background-color: #0056b3;
+        }
+        .card {
+            background-color: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px;
+            width: 100%;
+            max-width: 600px;
+        }
+        img {
+            margin-top: 10px;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <h2>Perfil del Estudiante</h2>
+
+    <div class="card">
+        <!-- Botón de editar -->
+        <form action="/editar/{{ estudiante.id }}" method="get" style="display:inline;">
+            <button type="submit" class="boton">Editar Estudiante</button>
+        </form>
+
+        <p><strong>Nombre:</strong> {{ estudiante.nombre }}</p>
+        <p><strong>Apellidos:</strong> {{ estudiante.apellidos }}</p>
+        <p><strong>Curso:</strong> {{ estudiante.curso }}</p>
+
+        <h3>Foto del Estudiante</h3>
+        <img src="/static/qr/fotos_estudiantes/{{ estudiante.id }}.jpg" width="200" alt="Foto del estudiante"
+             onerror="this.style.display='none';">
+
+        {% if vehiculo %}
+            <h3>Datos del Vehículo</h3>
+            <p><strong>Modelo:</strong> {{ vehiculo.modelo }}</p>
+            <p><strong>Placa:</strong> {{ vehiculo.placa }}</p>
+            <p><strong>Tipo:</strong> {{ vehiculo.tipo }}</p>
+            <img src="/{{ vehiculo.foto }}" width="300" alt="Foto del vehículo">
+        {% else %}
+            <p><em>Este estudiante no tiene vehículo registrado.</em></p>
+        {% endif %}
+
+        <a href="/dashboard"><button type="button" class="boton">Volver al Dashboard</button></a>
+    </div>
+</body>
+</html>
+

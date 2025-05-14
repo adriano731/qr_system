@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Estudiante</title>
+</head>
+<body style="font-family: Arial; text-align: center;">
+    <h2>Editar datos del estudiante</h2>
+    <form method="POST">
+        <label>ID:</label><br>
+        <input type="number" name="id" value="{{ estudiante.id }}" required><br><br>
+
+        <label>Nombre:</label><br>
+        <input type="text" name="nombre" value="{{ estudiante.nombre }}" required><br><br>
+
+        <label>Apellidos:</label><br>
+        <input type="text" name="apellidos" value="{{ estudiante.apellidos }}" required><br><br>
+
+        <label>Curso:</label><br>
+        <input type="text" name="curso" value="{{ estudiante.curso }}" required><br><br>
+
+        <button type="submit">Guardar Cambios</button>
+        <a href="/perfil/{{ estudiante.id }}"><button type="button">Cancelar</button></a>
+    </form>
+</body>
+</html>
