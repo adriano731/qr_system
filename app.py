@@ -1,4 +1,5 @@
-from flask import Flask, render_template # request, redirect, session, url_for, jsonify
+from flask import Flask, render_template, request, redirect, session  # ← activa lo que estaba comentado
+
 import os
 import qrcode
 from datetime import datetime
@@ -6,11 +7,6 @@ from db_config import get_db_connection
 
 app = Flask(__name__)
 app.secret_key = 'clave_super_secreta'
-
-
-@app.route('/login')
-def login():
-    return render_template('login.html')
 
 # Crear carpetas si no existen
 os.makedirs('static/qr', exist_ok=True)
@@ -23,27 +19,28 @@ def index():
     return render_template('login.html')
 
 # --- LOGIN ---
-@app.route('/login', methods=['POST'])
+@app.route('/login', methods=['GET', 'POST'])
 def login():
-    usuario = request.form['usuario']
-    contrasena = request.form['contraseña']
+    if request.method == 'POST':
+        usuario = request.form['usuario']
+        contrasena = request.form['contraseña']
 
-    conn = get_db_connection()
-    cursor = conn.cursor()
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.execute("SELECT * FROM usuarios WHERE usuario = %s AND contraseña = %s", (usuario, contrasena))
+        user = cursor.fetchone()
+        cursor.close()
+        conn.close()
 
-    cursor.execute("SELECT * FROM usuarios WHERE usuario = %s AND contraseña = %s", (usuario, contrasena))
-    user = cursor.fetchone()
+        if user:
+            session['usuario'] = user['usuario']
+            session['rol'] = user['rol']
+            return redirect('/dashboard')
+        else:
+            return "Credenciales inválidas. <a href='/'>Volver</a>"
 
-    cursor.close()
-    conn.close()
-
-    if user:
-        session['usuario'] = user['usuario']
-        session['rol'] = user['rol']
-        return redirect('/dashboard')
-    else:
-        return "Credenciales inválidas. <a href='/'>Volver</a>"
-
+    # Si es GET, muestra el formulario
+    return render_template('login.html')
 
 # --- DASHBOARD ---
 @app.route('/dashboard')
